@@ -1,21 +1,22 @@
-package br.com.dsr.models;
+package br.com.dsr.modules.users.entities;
 
 import java.util.UUID;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.dsr.enums.RoleEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 @Entity
-public class UserModel {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,6 +33,10 @@ public class UserModel {
     private String password;
 
     @NotBlank
-    private RoleEnum role;
+    private String role;
+
+    @OneToOne()
+    @JoinColumn(name = "store_id", insertable = false, updatable = false)
+    private StoreEntity storeEntity;
 
 }

@@ -1,4 +1,4 @@
-package br.com.dsr.models;
+package br.com.dsr.modules.users.entities;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class StoreModel {
+public class StoreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
