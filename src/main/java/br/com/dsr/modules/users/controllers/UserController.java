@@ -32,12 +32,17 @@ public class UserController {
     }
 
     @PostMapping("/first-admin")
-    public ResponseEntity<UserEntity> createFirstAdmin(@RequestBody @Valid UserRecordDTO userRecordDTO) {
+    public ResponseEntity<Object> createFirstAdmin(@RequestBody @Valid UserRecordDTO userRecordDTO) {
 
-        this.hasAnyAdminUseCase.execute();
+        try {
+            this.hasAnyAdminUseCase.execute();
 
-        var response = this.createUserUseCase.execute(userRecordDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            var response = this.createUserUseCase.execute(userRecordDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
     }
 
 }
