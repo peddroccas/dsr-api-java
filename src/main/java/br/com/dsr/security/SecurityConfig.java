@@ -21,7 +21,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csfr -> csfr.disable()).authorizeHttpRequests(auth -> {
             auth
-                    .requestMatchers("/first-admin").permitAll();
+                    .requestMatchers("/first-admin").permitAll()
+                    .requestMatchers("/auth").permitAll();
 
             auth.anyRequest().authenticated();
         })

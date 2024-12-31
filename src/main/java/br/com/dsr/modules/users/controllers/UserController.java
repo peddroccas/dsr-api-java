@@ -24,7 +24,7 @@ public class UserController {
     private HasAnyAdminUseCase hasAnyAdminUseCase;
 
     @PostMapping("/users")
-    @PreAuthorize(("hasRole('ADMIN')"))
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserEntity> create(@RequestBody @Valid UserRecordDTO userRecordDTO) {
 
         var response = this.createUserUseCase.execute(userRecordDTO);
@@ -43,13 +43,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
 
-    }
-
-    @PostMapping("/auth")
-    public String authenticate(@RequestBody String entity) {
-        // TODO: process POST request
-
-        return entity;
     }
 
 }
