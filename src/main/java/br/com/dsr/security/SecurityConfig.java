@@ -22,7 +22,8 @@ public class SecurityConfig {
         http.csrf(csfr -> csfr.disable()).authorizeHttpRequests(auth -> {
             auth
                     .requestMatchers("/first-admin").permitAll()
-                    .requestMatchers("/auth").permitAll();
+                    .requestMatchers("/auth").permitAll()
+                    .requestMatchers("/profile").permitAll();
 
             auth.anyRequest().authenticated();
         })
