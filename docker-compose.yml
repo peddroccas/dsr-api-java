@@ -1,11 +1,16 @@
 version: '3.8'
 
 services:
-  dsr_postgres:
+  dsr-db:
     image: bitnami/postgresql:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=dsr_db
+      - POSTGRES_DB=dsrdb
+    volumes:
+      - dsr-pg:/bitnami/postgresql
+
+volumes:
+    dsr-pg:

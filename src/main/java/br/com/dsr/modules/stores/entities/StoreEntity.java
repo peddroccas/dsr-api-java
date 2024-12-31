@@ -1,4 +1,4 @@
-package br.com.dsr.modules.users.entities;
+package br.com.dsr.modules.stores.entities;
 
 import java.util.UUID;
 
@@ -10,7 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-@Entity
+@Entity(name = "stores")
+
 public class StoreEntity {
 
     @Id

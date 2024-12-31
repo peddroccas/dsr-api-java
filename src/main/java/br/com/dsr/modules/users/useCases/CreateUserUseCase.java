@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import br.com.dsr.exceptions.UserFoundException;
 import br.com.dsr.modules.users.DTOs.UserRecordDTO;
 import br.com.dsr.modules.users.entities.UserEntity;
+import br.com.dsr.modules.users.enums.RoleEnum;
 import br.com.dsr.modules.users.repositories.UserRepository;
 
 @Service
@@ -28,10 +29,11 @@ public class CreateUserUseCase {
 
         var userEntity = new UserEntity();
         var password = passwordEncoder.encode("123456");
+        var role = RoleEnum.valueOf(userRecordDTO.role());
 
         BeanUtils.copyProperties(userRecordDTO, userEntity);
         userEntity.setPassword(password);
-        userEntity.setRole(userRecordDTO.role());
+        userEntity.setRole(role);
 
         return this.userRepository.save(userEntity);
     }
