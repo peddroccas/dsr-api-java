@@ -7,7 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dsr.modules.users.DTOs.UserRecordDTO;
-import br.com.dsr.modules.users.entities.UserEntity;
 import br.com.dsr.modules.users.useCases.CreateUserUseCase;
 import br.com.dsr.modules.users.useCases.HasAnyAdminUseCase;
 import jakarta.validation.Valid;
@@ -25,10 +24,14 @@ public class UserController {
 
     @PostMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserEntity> create(@RequestBody @Valid UserRecordDTO userRecordDTO) {
+    public ResponseEntity<Object> create(@RequestBody @Valid UserRecordDTO userRecordDTO) {
+        try {
+            this.createUserUseCase.execute(userRecordDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
 
-        var response = this.createUserUseCase.execute(userRecordDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/first-admin")
@@ -37,8 +40,8 @@ public class UserController {
         try {
             this.hasAnyAdminUseCase.execute();
 
-            var response = this.createUserUseCase.execute(userRecordDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            this.createUserUseCase.execute(userRecordDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

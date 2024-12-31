@@ -47,9 +47,8 @@ public class AuthenticateUseCase {
         var expiresIn = Instant.now().plus(Duration.ofMinutes(10));
         var token = JWT.create()
                 .withExpiresAt(expiresIn)
-                .withIssuer("javagas")
                 .withSubject(user.getId().toString())
-                .withClaim("roles", Arrays.asList("CANDIDATE"))
+                .withClaim("roles", Arrays.asList(user.getRole().toString()))
                 .sign(algorithm);
 
         var authResponseDTO = AuthResponseDTO.builder()
