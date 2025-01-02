@@ -12,7 +12,7 @@ import br.com.dsr.modules.users.useCases.AuthenticateUseCase;
 import jakarta.validation.Valid;
 
 @RestController
-public class AuthController {
+public class AuthenticateController {
 
     @Autowired
     AuthenticateUseCase authenticateUseCase;

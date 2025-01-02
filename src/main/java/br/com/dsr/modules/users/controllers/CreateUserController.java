@@ -8,18 +8,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.dsr.modules.users.DTOs.UserRecordDTO;
-import br.com.dsr.modules.users.useCases.CreateUserUseCase;
+import br.com.dsr.modules.users.DTOs.AdminRecordDTO;
+import br.com.dsr.modules.users.useCases.CreateAdminUseCase;
 import jakarta.validation.Valid;
 
 @RestController
 public class CreateUserController {
     @Autowired
-    private CreateUserUseCase createUserUseCase;
+    private CreateAdminUseCase createUserUseCase;
 
     @PostMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> handle(@RequestBody @Valid UserRecordDTO userRecordDTO) {
+    public ResponseEntity<Object> handle(@RequestBody @Valid AdminRecordDTO userRecordDTO) {
         try {
             this.createUserUseCase.execute(userRecordDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
