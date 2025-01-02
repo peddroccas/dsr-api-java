@@ -13,13 +13,13 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@RestController("/first-admin")
+@RestController
 public class CreateFirstAdminController {
     @Autowired
     private HasAnyAdminUseCase hasAnyAdminUseCase;
     private CreateUserUseCase createUserUseCase;
 
-    @PostMapping("")
+    @PostMapping("/first-admin")
     public ResponseEntity<Object> handle(@RequestBody @Valid UserRecordDTO userRecordDTO) {
 
         try {

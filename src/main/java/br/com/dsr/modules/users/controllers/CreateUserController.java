@@ -12,13 +12,13 @@ import br.com.dsr.modules.users.DTOs.UserRecordDTO;
 import br.com.dsr.modules.users.useCases.CreateUserUseCase;
 import jakarta.validation.Valid;
 
-@RestController("/users")
-@PreAuthorize("hasRole('ADMIN')")
+@RestController
 public class CreateUserController {
     @Autowired
     private CreateUserUseCase createUserUseCase;
 
-    @PostMapping()
+    @PostMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> handle(@RequestBody @Valid UserRecordDTO userRecordDTO) {
         try {
             this.createUserUseCase.execute(userRecordDTO);
