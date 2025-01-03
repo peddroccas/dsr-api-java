@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dsr.modules.users.DTOs.AuthRecordDTO;
+import br.com.dsr.modules.users.DTOs.UpdatePasswordDTO;
 import br.com.dsr.modules.users.DTOs.UserRecordDTO;
 import br.com.dsr.modules.users.useCases.AuthenticateUseCase;
 import br.com.dsr.modules.users.useCases.DeleteUserUseCase;
@@ -89,11 +90,12 @@ public class UserController {
     }
 
     @PatchMapping("/users")
-    public ResponseEntity<Object> updatePassword(HttpServletRequest request, @RequestBody String password) {
+    public ResponseEntity<Object> updatePassword(HttpServletRequest request,
+            @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         var id = UUID.fromString(request.getAttribute("id").toString());
 
         try {
-            updatePasswordUseCase.execute(id, password);
+            updatePasswordUseCase.execute(id, updatePasswordDTO.password());
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
