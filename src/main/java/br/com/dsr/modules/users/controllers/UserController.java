@@ -5,19 +5,24 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dsr.modules.users.DTOs.AuthRecordDTO;
 import br.com.dsr.modules.users.DTOs.UserRecordDTO;
 import br.com.dsr.modules.users.useCases.AuthenticateUseCase;
+import br.com.dsr.modules.users.useCases.DeleteUserUseCase;
 import br.com.dsr.modules.users.useCases.ProfileUseCase;
 import br.com.dsr.modules.users.useCases.UpdateUserUseCase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class UserController {
@@ -28,6 +33,8 @@ public class UserController {
     private ProfileUseCase profileUseCase;
     @Autowired
     private UpdateUserUseCase updateUserUseCase;
+    @Autowired
+    private DeleteUserUseCase deleteUserUseCase;
 
     @GetMapping("/profile")
     public ResponseEntity<Object> profile(HttpServletRequest request) {
@@ -56,6 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> update(@RequestBody UserRecordDTO userRecordDTO) {
         try {
             updateUserUseCase.execute(userRecordDTO);
@@ -66,4 +74,14 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+        try {
+            deleteUserUseCase.execute(id);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
