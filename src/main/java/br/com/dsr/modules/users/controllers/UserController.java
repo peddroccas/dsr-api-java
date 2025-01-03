@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dsr.modules.users.DTOs.AuthRecordDTO;
+import br.com.dsr.modules.users.DTOs.UserRecordDTO;
 import br.com.dsr.modules.users.useCases.AuthenticateUseCase;
 import br.com.dsr.modules.users.useCases.ProfileUseCase;
+import br.com.dsr.modules.users.useCases.UpdateUserUseCase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class UserController {
@@ -23,6 +26,8 @@ public class UserController {
     private AuthenticateUseCase authenticateUseCase;
     @Autowired
     private ProfileUseCase profileUseCase;
+    @Autowired
+    private UpdateUserUseCase updateUserUseCase;
 
     @GetMapping("/profile")
     public ResponseEntity<Object> profile(HttpServletRequest request) {
@@ -46,6 +51,17 @@ public class UserController {
         } catch (Exception e) {
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
+        }
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<Object> update(@RequestBody UserRecordDTO userRecordDTO) {
+        try {
+            updateUserUseCase.execute(userRecordDTO);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
 
         }
     }
