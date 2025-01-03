@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.dsr.modules.users.DTOs.UpdatePasswordDTO;
 import br.com.dsr.modules.users.entities.UserEntity;
 import br.com.dsr.modules.users.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

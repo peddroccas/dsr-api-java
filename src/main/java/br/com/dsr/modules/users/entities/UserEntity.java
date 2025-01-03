@@ -1,7 +1,10 @@
 package br.com.dsr.modules.users.entities;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import br.com.dsr.modules.users.enums.RoleEnum;
@@ -38,5 +41,11 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }
