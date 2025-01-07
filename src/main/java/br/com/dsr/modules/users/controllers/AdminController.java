@@ -43,7 +43,7 @@ public class AdminController {
             this.createAdminUseCase.execute(adminRecordDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

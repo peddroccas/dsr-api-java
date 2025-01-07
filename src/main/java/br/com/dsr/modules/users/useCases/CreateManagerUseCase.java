@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.dsr.exceptions.UserFoundException;
+import br.com.dsr.exceptions.EntityFoundException;
 import br.com.dsr.modules.users.DTOs.ManagerRecordDTO;
 import br.com.dsr.modules.users.entities.ManagerEntity;
 import br.com.dsr.modules.users.enums.RoleEnum;
@@ -20,7 +20,7 @@ public class CreateManagerUseCase {
 
     public ManagerEntity execute(ManagerRecordDTO managerRecordDTO) {
         this.managerRepository.findByEmail(managerRecordDTO.email()).ifPresent((user) -> {
-            throw new UserFoundException();
+            throw new EntityFoundException("Gerente");
         });
 
         var managerEntity = new ManagerEntity();

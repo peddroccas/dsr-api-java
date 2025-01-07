@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.dsr.exceptions.UserFoundException;
+import br.com.dsr.exceptions.EntityFoundException;
 import br.com.dsr.modules.users.DTOs.AdminRecordDTO;
 import br.com.dsr.modules.users.entities.AdminEntity;
 import br.com.dsr.modules.users.enums.RoleEnum;
@@ -24,7 +24,7 @@ public class CreateAdminUseCase {
         this.adminRepository
                 .findByEmail(adminRecordDTO.email())
                 .ifPresent((user) -> {
-                    throw new UserFoundException();
+                    throw new EntityFoundException("Usuário");
                 });
 
         var adminEntity = new AdminEntity();
