@@ -44,7 +44,7 @@ public class AuthenticateUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        var expiresIn = Instant.now().plus(Duration.ofMinutes(10));
+        var expiresIn = Instant.now().plus(Duration.ofMinutes(120));
         var token = JWT.create()
                 .withExpiresAt(expiresIn)
                 .withSubject(user.getId().toString())
