@@ -6,9 +6,8 @@ import br.com.dsr.modules.stores.DTOs.StoreRecordDTO;
 import br.com.dsr.modules.stores.entities.StoreEntity;
 import br.com.dsr.modules.stores.useCases.CreateStoreUseCase;
 import br.com.dsr.modules.stores.useCases.FindStoresUseCase;
+import br.com.dsr.modules.stores.useCases.UpdateStoreUseCase;
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/stores")
@@ -28,6 +27,8 @@ public class StoreController {
     private CreateStoreUseCase createStoreUseCase;
     @Autowired
     private FindStoresUseCase findStoresUseCase;
+    @Autowired
+    private UpdateStoreUseCase updateStoreUseCase;
 
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,4 +55,14 @@ public class StoreController {
 
     }
 
+    @PutMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Object> update(@RequestBody @Valid StoreEntity storeEntity) {
+        try {
+            this.updateStoreUseCase.execute(storeEntity);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
