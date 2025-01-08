@@ -6,10 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.dsr.exceptions.EntityFoundException;
-import br.com.dsr.modules.users.DTOs.ManagerRecordDTO;
+import br.com.dsr.modules.users.DTOs.CreateManagerRecordDTO;
 import br.com.dsr.modules.users.entities.ManagerEntity;
 import br.com.dsr.modules.users.enums.RoleEnum;
 import br.com.dsr.modules.users.repositories.ManagerRepository;
+import br.com.dsr.modules.users.repositories.UserRepository;
 
 @Service
 public class CreateManagerUseCase {
@@ -17,17 +18,20 @@ public class CreateManagerUseCase {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ManagerRepository managerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public ManagerEntity execute(ManagerRecordDTO managerRecordDTO) {
-        this.managerRepository.findByEmail(managerRecordDTO.email()).ifPresent((user) -> {
-            throw new EntityFoundException("Gerente");
+    public ManagerEntity execute(CreateManagerRecordDTO createManagerRecordDTO) {
+
+        this.userRepository.findByEmail(createManagerRecordDTO.email()).ifPresent((user) -> {
+            throw new EntityFoundException("Usuário");
         });
 
         var managerEntity = new ManagerEntity();
         var password = passwordEncoder.encode("123456");
         var role = RoleEnum.MANAGER;
 
-        BeanUtils.copyProperties(managerRecordDTO, managerEntity);
+        BeanUtils.copyProperties(createManagerRecordDTO, managerEntity);
         managerEntity.setPassword(password);
         managerEntity.setRole(role);
 

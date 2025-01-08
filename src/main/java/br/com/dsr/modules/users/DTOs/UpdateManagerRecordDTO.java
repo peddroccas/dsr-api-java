@@ -5,7 +5,8 @@ import java.util.UUID;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record ManagerRecordDTO(
+public record UpdateManagerRecordDTO(
+        @NotBlank UUID id,
         @NotBlank String name,
         @NotBlank @Email String email,
         @NotBlank UUID storeId) {

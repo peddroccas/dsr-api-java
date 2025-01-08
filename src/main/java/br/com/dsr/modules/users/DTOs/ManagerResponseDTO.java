@@ -2,7 +2,6 @@ package br.com.dsr.modules.users.DTOs;
 
 import java.util.UUID;
 
-import br.com.dsr.modules.users.enums.RoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -14,17 +13,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDTO {
+public class ManagerResponseDTO {
     @NotBlank
-    private UUID id;
+    UUID id;
 
     @NotBlank
-    private String name;
+    String name;
 
     @NotBlank
     @Email
-    private String email;
+    String email;
 
     @NotBlank
-    private RoleEnum role;
+    UUID storeId;
 }
