@@ -82,7 +82,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> delete(@PathVariable UUID id) {
         try {
-            deleteUserUseCase.execute(id);
+            this.deleteUserUseCase.execute(id);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
