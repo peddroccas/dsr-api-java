@@ -28,6 +28,10 @@ public class SecurityConfig {
             auth.anyRequest().authenticated();
         })
                 .addFilterBefore(securityUserFilter, BasicAuthenticationFilter.class);
+
+        http.cors(cors -> cors.configurationSource(request -> new org.springframework.web.cors.CorsConfiguration()
+                .applyPermitDefaultValues()));
+
         return http.build();
     }
 
