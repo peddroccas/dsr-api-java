@@ -24,7 +24,7 @@ public class CreateAdminUseCase {
         this.adminRepository
                 .findByEmail(adminRecordDTO.email())
                 .ifPresent((user) -> {
-                    throw new EntityFoundException("Usuário");
+                    throw new EntityFoundException("User");
                 });
 
         var adminEntity = new AdminEntity();

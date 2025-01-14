@@ -19,7 +19,7 @@ public class UpdateStoreUseCase {
         });
 
         this.storeRepository.findByName(storeEntity.getName()).ifPresent((store) -> {
-            throw new EntityFoundException("Loja");
+            throw new EntityFoundException("Store");
         });
 
         return this.storeRepository.save(storeEntity);

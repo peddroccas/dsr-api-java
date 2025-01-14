@@ -20,7 +20,7 @@ public class UpdateManagerUseCase {
             throw new EntityNotFoundException();
         });
         this.managerRepository.findByEmail(updateManagerRecordDTO.email()).ifPresent((managers) -> {
-            throw new EntityFoundException("Gerente");
+            throw new EntityFoundException("Manager");
         });
 
         var managerEntity = new ManagerEntity();

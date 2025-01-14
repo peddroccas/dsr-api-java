@@ -16,7 +16,7 @@ public class CreateStoreUseCase {
 
     public StoreEntity execute(StoreRecordDTO storeRecordDTO) {
         this.storeRepository.findByName(storeRecordDTO.name()).ifPresent((store) -> {
-            throw new EntityFoundException("Loja");
+            throw new EntityFoundException("Store");
         });
 
         var storeEntity = new StoreEntity();

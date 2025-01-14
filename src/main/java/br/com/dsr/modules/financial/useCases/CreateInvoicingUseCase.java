@@ -20,7 +20,7 @@ public class CreateInvoicingUseCase {
         var date = LocalDateTime.of(invoicingRecordDTO.year(), invoicingRecordDTO.month(), 1, 0, 0);
 
         this.invoicingRepository.findByStoreIdAndDate(invoicingRecordDTO.storeId(), date).ifPresent((invoicing) -> {
-            throw new EntityFoundException("Faturamento");
+            throw new EntityFoundException("Invoicing");
         });
 
         var invoicingEntity = new InvoicingEntity();

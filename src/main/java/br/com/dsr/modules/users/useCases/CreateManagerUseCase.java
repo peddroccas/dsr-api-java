@@ -24,7 +24,7 @@ public class CreateManagerUseCase {
     public ManagerEntity execute(CreateManagerRecordDTO createManagerRecordDTO) {
 
         this.userRepository.findByEmail(createManagerRecordDTO.email()).ifPresent((user) -> {
-            throw new EntityFoundException("Usuário");
+            throw new EntityFoundException("User");
         });
 
         var managerEntity = new ManagerEntity();
