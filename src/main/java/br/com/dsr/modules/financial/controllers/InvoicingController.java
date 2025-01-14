@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.dsr.modules.financial.DTOs.InvoicingRecordDTO;
 import br.com.dsr.modules.financial.DTOs.UpdateInvoicingRecordDTO;
 import br.com.dsr.modules.financial.useCases.CreateInvoicingUseCase;
+import br.com.dsr.modules.financial.useCases.DeleteInvoicingUseCase;
 import br.com.dsr.modules.financial.useCases.FetchInvoicingsByStoreUseCase;
 import br.com.dsr.modules.financial.useCases.UpdateInvoicingUseCase;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +32,8 @@ public class InvoicingController {
     private FetchInvoicingsByStoreUseCase fetchInvoicingsByStoreUseCase;
     @Autowired
     private UpdateInvoicingUseCase updateInvoicingUseCase;
+    @Autowired
+    private DeleteInvoicingUseCase deleteInvoicingUseCase;
 
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
@@ -60,6 +64,17 @@ public class InvoicingController {
     public ResponseEntity<Object> update(@RequestBody @Valid UpdateInvoicingRecordDTO updateInvoicingRecordDTO) {
         try {
             this.updateInvoicingUseCase.execute(updateInvoicingRecordDTO);
+            return ResponseEntity.ok().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Object> delete(@PathVariable UUID id) {
+        try {
+            this.deleteInvoicingUseCase.execute(id);
             return ResponseEntity.ok().body(null);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
