@@ -13,12 +13,12 @@ public class DeleteUserUseCase {
     @Autowired
     private UserRepository userRepository;
 
-    public Object execute(UUID id) {
+    public void execute(UUID id) {
         this.userRepository.findById(id)
                 .orElseThrow(() -> {
                     throw new EntityNotFoundException();
                 });
 
-        return this.userRepository.deleteById(id);
+        this.userRepository.deleteById(id);
     }
 }
