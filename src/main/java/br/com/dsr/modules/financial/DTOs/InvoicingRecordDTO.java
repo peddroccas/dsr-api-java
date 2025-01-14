@@ -2,12 +2,12 @@ package br.com.dsr.modules.financial.DTOs;
 
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record InvoicingRecordDTO(
-        @NotBlank Double value,
-        @NotBlank int month,
-        @NotBlank int year,
-        @NotBlank UUID storeId) {
+        @NotNull Double value,
+        @NotNull int month,
+        @NotNull int year,
+        @NotNull UUID storeId) {
 
 }
