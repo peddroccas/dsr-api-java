@@ -8,38 +8,64 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.dsr.modules.financial.entities.InvoicingEntity;
 import br.com.dsr.modules.financial.repositories.InvoicingRepository;
 
 @Service
 public class FetchInvoicingsByStoreUseCase {
 
-    @Autowired
-    private InvoicingRepository invoicingRepository;
+        @Autowired
+        private InvoicingRepository invoicingRepository;
 
-    public Map<Integer, Map<String, Double>> execute(UUID storeId) {
-        var invoicings = this.invoicingRepository.findByStoreId(storeId).orElse(null);
+        public Map<Object, Object> execute(UUID storeId) {
+                var invoicings = this.invoicingRepository.findByStoreId(storeId).orElse(null);
 
-        // Agrupa os invoicings por ano
-        Map<Integer, Map<String, Double>> invoicingsPerYear = invoicings.stream()
-                .collect(Collectors.groupingBy(
-                        invoicing -> invoicing.getDate().getYear(),
-                        Collectors.collectingAndThen(
-                                Collectors.groupingBy(
-                                        invoicing -> invoicing.getDate().getMonth(),
-                                        Collectors.summingDouble(InvoicingEntity::getValue)),
-                                monthMap -> {
-                                    // Calcula o total por ano
-                                    double yearlyTotal = monthMap.values().stream().mapToDouble(Double::doubleValue)
-                                            .sum();
-                                    // Cria um novo map que inclui o total anual
-                                    Map<String, Double> result = new LinkedHashMap<>();
-                                    monthMap.forEach((month, value) -> result.put(month.name(), value));
-                                    result.put("TOTAL", yearlyTotal);
-                                    return result;
-                                })));
+                Map<Object, Object> invoicingsPerYear = invoicings.stream()
+                                .collect(Collectors.groupingBy(
+                                                invoicing -> invoicing.getDate().getYear(),
+                                                Collectors.collectingAndThen(
+                                                                Collectors.groupingBy(
+                                                                                invoicing -> invoicing.getDate()
+                                                                                                .getMonth().name(),
+                                                                                Collectors.reducing(
+                                                                                                new LinkedHashMap<>(),
+                                                                                                invoicing -> {
+                                                                                                        // Cria um mapa
+                                                                                                        // com os campos
+                                                                                                        // id e value
+                                                                                                        Map<String, Object> invoicingData = new LinkedHashMap<>();
+                                                                                                        invoicingData.put(
+                                                                                                                        "id",
+                                                                                                                        invoicing.getId()
+                                                                                                                                        .toString());
+                                                                                                        invoicingData.put(
+                                                                                                                        "value",
+                                                                                                                        invoicing.getValue());
+                                                                                                        return invoicingData;
+                                                                                                },
+                                                                                                (map1, map2) -> map2 // Mantém
+                                                                                                                     // o
+                                                                                                                     // último
+                                                                                                                     // mapeamento,
+                                                                                                                     // se
+                                                                                                                     // houver
+                                                                                                                     // mais
+                                                                                                                     // de
+                                                                                                                     // um
+                                                                                )),
+                                                                monthMap -> {
+                                                                        // Adiciona o total anual
+                                                                        double yearlyTotal = monthMap.values().stream()
+                                                                                        .mapToDouble(data -> (Double) data
+                                                                                                        .get("value"))
+                                                                                        .sum();
 
-        return invoicingsPerYear;
-    }
+                                                                        // Adiciona o total anual
+                                                                        monthMap.put("TOTAL",
+                                                                                        Map.of("TOTAL", yearlyTotal));
+                                                                        return monthMap;
+                                                                })));
+
+                return invoicingsPerYear;
+        }
 
 }
