@@ -61,7 +61,7 @@ public class FetchInvoicingsByStoreUseCase {
 
                                                                         // Adiciona o total anual
                                                                         monthMap.put("TOTAL",
-                                                                                        Map.of("TOTAL", yearlyTotal));
+                                                                                        Map.of("value", yearlyTotal));
                                                                         return monthMap;
                                                                 })));
 
