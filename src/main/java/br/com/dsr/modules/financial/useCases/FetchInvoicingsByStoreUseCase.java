@@ -1,12 +1,9 @@
 package br.com.dsr.modules.financial.useCases;
 
-import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.swing.text.NumberFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +38,7 @@ public class FetchInvoicingsByStoreUseCase {
                                                                                                                         invoicing.getId()
                                                                                                                                         .toString());
                                                                                                         invoicingData.put(
-                                                                                                                        "monthly",
+                                                                                                                        "value",
                                                                                                                         invoicing.getValue());
 
                                                                                                         var invoicingDiary = invoicing
@@ -71,7 +68,7 @@ public class FetchInvoicingsByStoreUseCase {
                                                                         // Adiciona o total anual
                                                                         double yearlyTotal = monthMap.values().stream()
                                                                                         .mapToDouble(data -> (Double) data
-                                                                                                        .get("monthly"))
+                                                                                                        .get("value"))
                                                                                         .sum();
 
                                                                         // Adiciona o total anual
