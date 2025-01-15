@@ -1,7 +1,5 @@
 package br.com.dsr.modules.users.useCases;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 
 import javax.security.sasl.AuthenticationException;
@@ -44,9 +42,7 @@ public class AuthenticateUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
-        var expiresIn = Instant.now().plus(Duration.ofMinutes(120));
         var token = JWT.create()
-                .withExpiresAt(expiresIn)
                 .withSubject(user.getId().toString())
                 .withClaim("roles", Arrays.asList(user.getRole().toString()))
                 .sign(algorithm);
