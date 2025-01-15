@@ -1,9 +1,12 @@
 package br.com.dsr.modules.financial.useCases;
 
+import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.swing.text.NumberFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +41,20 @@ public class FetchInvoicingsByStoreUseCase {
                                                                                                                         invoicing.getId()
                                                                                                                                         .toString());
                                                                                                         invoicingData.put(
-                                                                                                                        "value",
+                                                                                                                        "monthly",
                                                                                                                         invoicing.getValue());
+
+                                                                                                        var invoicingDiary = invoicing
+                                                                                                                        .getValue()
+                                                                                                                        / invoicing.getDate()
+                                                                                                                                        .getMonth()
+                                                                                                                                        .length(invoicing
+                                                                                                                                                        .getDate()
+                                                                                                                                                        .getYear()
+                                                                                                                                                        % 4 == 0);
+                                                                                                        invoicingData.put(
+                                                                                                                        "diary",
+                                                                                                                        invoicingDiary);
                                                                                                         return invoicingData;
                                                                                                 },
                                                                                                 (map1, map2) -> map2 // Mantém
@@ -56,7 +71,7 @@ public class FetchInvoicingsByStoreUseCase {
                                                                         // Adiciona o total anual
                                                                         double yearlyTotal = monthMap.values().stream()
                                                                                         .mapToDouble(data -> (Double) data
-                                                                                                        .get("value"))
+                                                                                                        .get("monthly"))
                                                                                         .sum();
 
                                                                         // Adiciona o total anual

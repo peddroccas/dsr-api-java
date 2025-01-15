@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.dsr.modules.financial.DTOs.InvoicingRecordDTO;
 import br.com.dsr.modules.financial.DTOs.UpdateInvoicingRecordDTO;
+import br.com.dsr.modules.financial.enums.FrequencyEnum;
 import br.com.dsr.modules.financial.useCases.CreateInvoicingUseCase;
 import br.com.dsr.modules.financial.useCases.DeleteInvoicingUseCase;
 import br.com.dsr.modules.financial.useCases.FetchInvoicingsByStoreUseCase;
