@@ -1,6 +1,7 @@
 package br.com.dsr.modules.financial.useCases;
 
-import java.util.LinkedHashMap;
+import java.time.Month;
+import java.time.Year;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -8,76 +9,95 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.dsr.modules.financial.DTOs.MonthInvoicingDTO;
 import br.com.dsr.modules.financial.repositories.InvoicingRepository;
 
 @Service
 public class FetchInvoicingsByStoreUseCase {
 
-        @Autowired
-        private InvoicingRepository invoicingRepository;
+    @Autowired
+    private InvoicingRepository invoicingRepository;
 
-        public Map<Object, Object> execute(UUID storeId) {
-                var invoicings = this.invoicingRepository.findByStoreId(storeId).orElse(null);
+    public Map<Year, Map<Month, MonthInvoicingDTO>> execute(UUID storeId) {
+        var invoicings = this.invoicingRepository.findByStoreId(storeId).orElse(null);
 
-                Map<Object, Object> invoicingsPerYear = invoicings.stream()
-                                .collect(Collectors.groupingBy(
-                                                invoicing -> invoicing.getDate().getYear(),
-                                                Collectors.collectingAndThen(
-                                                                Collectors.groupingBy(
-                                                                                invoicing -> invoicing.getDate()
-                                                                                                .getMonth().name(),
-                                                                                Collectors.reducing(
-                                                                                                new LinkedHashMap<>(),
-                                                                                                invoicing -> {
-                                                                                                        // Cria um mapa
-                                                                                                        // com os campos
-                                                                                                        // id e value
-                                                                                                        Map<String, Object> invoicingData = new LinkedHashMap<>();
-                                                                                                        invoicingData.put(
-                                                                                                                        "id",
-                                                                                                                        invoicing.getId()
-                                                                                                                                        .toString());
-                                                                                                        invoicingData.put(
-                                                                                                                        "value",
-                                                                                                                        invoicing.getValue());
+        // Organize os faturamentos por ano e por mês
+        Map<Year, Map<Month, MonthInvoicingDTO>> invoicingsPerYear = invoicings.stream()
+                .collect(Collectors.groupingBy(
+                        invoicing -> Year.of(invoicing.getDate().getYear()),
+                        Collectors.groupingBy(
+                                invoicing -> invoicing.getDate().getMonth(),
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        invoicingList -> {
+                                            // Calcula os dados para cada mês
+                                            double totalValue = invoicingList.stream()
+                                                    .mapToDouble(invoicing -> invoicing.getValue()).sum();
+                                            double diaryValue = totalValue /
+                                                    invoicingList.get(0).getDate().getMonth().length(
+                                                            invoicingList.get(0).getDate().getYear() % 4 == 0);
 
-                                                                                                        var invoicingDiary = invoicing
-                                                                                                                        .getValue()
-                                                                                                                        / invoicing.getDate()
-                                                                                                                                        .getMonth()
-                                                                                                                                        .length(invoicing
-                                                                                                                                                        .getDate()
-                                                                                                                                                        .getYear()
-                                                                                                                                                        % 4 == 0);
-                                                                                                        invoicingData.put(
-                                                                                                                        "diary",
-                                                                                                                        invoicingDiary);
-                                                                                                        return invoicingData;
-                                                                                                },
-                                                                                                (map1, map2) -> map2 // Mantém
-                                                                                                                     // o
-                                                                                                                     // último
-                                                                                                                     // mapeamento,
-                                                                                                                     // se
-                                                                                                                     // houver
-                                                                                                                     // mais
-                                                                                                                     // de
-                                                                                                                     // um
-                                                                                )),
-                                                                monthMap -> {
-                                                                        // Adiciona o total anual
-                                                                        double yearlyTotal = monthMap.values().stream()
-                                                                                        .mapToDouble(data -> (Double) data
-                                                                                                        .get("value"))
-                                                                                        .sum();
+                                            MonthInvoicingDTO monthInvoicingDTO = new MonthInvoicingDTO();
+                                            monthInvoicingDTO.setValue(totalValue);
+                                            monthInvoicingDTO.setDiary(diaryValue);
+                                            return monthInvoicingDTO;
+                                        }))));
 
-                                                                        // Adiciona o total anual
-                                                                        monthMap.put("TOTAL",
-                                                                                        Map.of("value", yearlyTotal));
-                                                                        return monthMap;
-                                                                })));
+        // Calcula o crescimento para cada mês
+        invoicingsPerYear.forEach((year, months) -> {
+            months.forEach((month, invoicing) -> {
+                double currentValue = (double) invoicing.getValue();
 
-                return invoicingsPerYear;
+                // Crescimento em relação ao mesmo mês do último ano
+                if (invoicingsPerYear.containsKey(year.minusYears(1)) &&
+                        invoicingsPerYear.get(year.minusYears(1)).containsKey(month)) {
+                    double lastYearValue = (double) invoicingsPerYear.get(year.minusYears(1)).get(month).getValue();
+                    double growthLastYear = ((currentValue - lastYearValue) / lastYearValue) * 100;
+                    invoicing.setGrowthLastYear(growthLastYear);
+                } else {
+                    invoicing.setGrowthLastYear(null); // Sem dados do último ano
+                }
+
+                // Crescimento em relação ao último mês
+                Month previousMonth = getPreviousMonth(month, year, invoicingsPerYear);
+                if (previousMonth != null) {
+                    Year previousYear = month.equals(Month.JANUARY) ? year.minusYears(1) : year;
+                    if (invoicingsPerYear.containsKey(previousYear) &&
+                            invoicingsPerYear.get(previousYear).containsKey(previousMonth)) {
+                        double lastMonthValue = (double) invoicingsPerYear.get(previousYear).get(previousMonth)
+                                .getValue();
+                        double growthLastMonth = ((currentValue - lastMonthValue) / lastMonthValue) * 100;
+                        invoicing.setGrowthLastMonth(growthLastMonth);
+                    } else {
+                        invoicing.setGrowthLastMonth(null); // Sem dados do mês anterior
+                    }
+                } else {
+                    invoicing.setGrowthLastMonth(null); // Sem dados do mês anterior
+                }
+            });
+        });
+
+        return invoicingsPerYear;
+    }
+
+    // Método auxiliar para obter o mês anterior, considerando a transição de ano
+    private Month getPreviousMonth(Month currentMonth, Year currentYear,
+            Map<Year, Map<Month, MonthInvoicingDTO>> invoicingsPerYear) {
+        try {
+            var previous = currentMonth.minus(1);
+
+            // Verifica se o mês anterior é do ano anterior
+            if (previous == java.time.Month.DECEMBER) {
+                Year previousYear = currentYear.minusYears(1);
+                if (invoicingsPerYear.containsKey(previousYear)) {
+                    return Month.DECEMBER; // Último mês do ano anterior
+                } else {
+                    return null; // Sem dados para o ano anterior
+                }
+            }
+            return previous;
+        } catch (Exception e) {
+            return null; // Mês inválido ou sem anterior
         }
-
+    }
 }
