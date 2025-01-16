@@ -51,9 +51,9 @@ public class LossController {
     public ResponseEntity<Object> fetchByStore(@PathVariable UUID storeId) {
 
         try {
-            var Losss = this.fetchLossesByStoreUseCase.execute(storeId);
+            var losses = this.fetchLossesByStoreUseCase.execute(storeId);
 
-            return ResponseEntity.ok().body(Losss);
+            return ResponseEntity.ok().body(losses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

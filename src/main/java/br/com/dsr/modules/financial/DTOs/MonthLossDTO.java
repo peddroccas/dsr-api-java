@@ -1,6 +1,6 @@
 package br.com.dsr.modules.financial.DTOs;
 
-import java.util.Map;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class YearInvoicingDTO {
-	private Map<String, MonthInvoicingDTO> months;
+@NoArgsConstructor
+public class MonthLossDTO {
+	private UUID id;
+	private Double value;
+	private Double percentage;
 }

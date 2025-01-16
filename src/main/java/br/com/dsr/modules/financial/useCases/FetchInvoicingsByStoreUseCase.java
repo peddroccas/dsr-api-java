@@ -29,15 +29,18 @@ public class FetchInvoicingsByStoreUseCase {
                                 invoicing -> invoicing.getDate().getMonth(),
                                 Collectors.collectingAndThen(
                                         Collectors.toList(),
-                                        invoicingList -> {
+                                        invoicingsPerMonth -> {
                                             // Calcula os dados para cada mês
-                                            double totalValue = invoicingList.stream()
+                                            UUID id = invoicingsPerMonth.get(0).getId();
+                                            Double totalValue = invoicingsPerMonth.stream()
                                                     .mapToDouble(invoicing -> invoicing.getValue()).sum();
-                                            double diaryValue = totalValue /
-                                                    invoicingList.get(0).getDate().getMonth().length(
-                                                            invoicingList.get(0).getDate().getYear() % 4 == 0);
+                                            Double diaryValue = totalValue /
+                                                    invoicingsPerMonth.get(0).getDate().getMonth().length(
+                                                            invoicingsPerMonth.get(0).getDate().getYear() % 4 == 0);
 
                                             MonthInvoicingDTO monthInvoicingDTO = new MonthInvoicingDTO();
+
+                                            monthInvoicingDTO.setId(id);
                                             monthInvoicingDTO.setValue(totalValue);
                                             monthInvoicingDTO.setDiary(diaryValue);
                                             return monthInvoicingDTO;
@@ -46,13 +49,13 @@ public class FetchInvoicingsByStoreUseCase {
         // Calcula o crescimento para cada mês
         invoicingsPerYear.forEach((year, months) -> {
             months.forEach((month, invoicing) -> {
-                double currentValue = (double) invoicing.getValue();
+                Double currentValue = (Double) invoicing.getValue();
 
                 // Crescimento em relação ao mesmo mês do último ano
                 if (invoicingsPerYear.containsKey(year.minusYears(1)) &&
                         invoicingsPerYear.get(year.minusYears(1)).containsKey(month)) {
-                    double lastYearValue = (double) invoicingsPerYear.get(year.minusYears(1)).get(month).getValue();
-                    double growthLastYear = ((currentValue - lastYearValue) / lastYearValue) * 100;
+                    Double lastYearValue = (Double) invoicingsPerYear.get(year.minusYears(1)).get(month).getValue();
+                    Double growthLastYear = ((currentValue - lastYearValue) / lastYearValue) * 100;
                     invoicing.setGrowthLastYear(growthLastYear);
                 } else {
                     invoicing.setGrowthLastYear(null); // Sem dados do último ano
@@ -64,9 +67,9 @@ public class FetchInvoicingsByStoreUseCase {
                     Year previousYear = month.equals(Month.JANUARY) ? year.minusYears(1) : year;
                     if (invoicingsPerYear.containsKey(previousYear) &&
                             invoicingsPerYear.get(previousYear).containsKey(previousMonth)) {
-                        double lastMonthValue = (double) invoicingsPerYear.get(previousYear).get(previousMonth)
+                        Double lastMonthValue = (Double) invoicingsPerYear.get(previousYear).get(previousMonth)
                                 .getValue();
-                        double growthLastMonth = ((currentValue - lastMonthValue) / lastMonthValue) * 100;
+                        Double growthLastMonth = ((currentValue - lastMonthValue) / lastMonthValue) * 100;
                         invoicing.setGrowthLastMonth(growthLastMonth);
                     } else {
                         invoicing.setGrowthLastMonth(null); // Sem dados do mês anterior
