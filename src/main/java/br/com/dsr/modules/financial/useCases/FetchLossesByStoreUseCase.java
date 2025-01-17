@@ -61,14 +61,6 @@ public class FetchLossesByStoreUseCase {
                                                 },
                                                 (dto1, dto2) -> dto2)),
                                 monthMap -> {
-                                    // Adiciona o total anual
-                                    double yearlyTotal = monthMap.values().stream()
-                                            .mapToDouble(MonthLossDTO::getValue)
-                                            .sum();
-
-                                    // Adiciona o total anual
-                                    monthMap.put(Month.DECEMBER, MonthLossDTO.builder().id(UUID.randomUUID())
-                                            .value(yearlyTotal).percentage(0.0).build());
                                     return monthMap;
                                 })));
         return lossesPerYear;
