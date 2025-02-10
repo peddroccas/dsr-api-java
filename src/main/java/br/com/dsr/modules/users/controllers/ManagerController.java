@@ -35,7 +35,7 @@ public class ManagerController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Object> create(@RequestBody CreateManagerRecordDTO createManagerRecordDTO) {
+    public ResponseEntity<Object> create(@RequestBody @Valid CreateManagerRecordDTO createManagerRecordDTO) {
         try {
             this.createManagerUseCase.execute(createManagerRecordDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);

@@ -19,8 +19,12 @@ public class UpdateManagerUseCase {
         var manager = this.managerRepository.findById(updateManagerRecordDTO.id()).orElseThrow(() -> {
             throw new EntityNotFoundException();
         });
-        this.managerRepository.findByEmail(updateManagerRecordDTO.email()).ifPresent((managers) -> {
-            throw new EntityFoundException("Manager");
+        this.managerRepository.findByEmail(updateManagerRecordDTO.email()).ifPresent((managerWithEmail) -> {
+            Boolean sameManager = managerWithEmail.getId() == manager.getId();
+            if (!sameManager) {
+                throw new EntityFoundException("Manager");
+            }
+
         });
 
         var managerEntity = new ManagerEntity();
