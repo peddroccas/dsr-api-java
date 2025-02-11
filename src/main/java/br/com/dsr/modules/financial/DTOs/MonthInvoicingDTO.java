@@ -17,4 +17,5 @@ public class MonthInvoicingDTO {
 	private double diary;
 	private Double growthLastYear;
 	private Double growthLastMonth;
+	private Double growthLastMonthDiary;
 }

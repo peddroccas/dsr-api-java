@@ -50,11 +50,12 @@ public class FetchInvoicingsByStoreUseCase {
         invoicingsPerYear.forEach((year, months) -> {
             months.forEach((month, invoicing) -> {
                 Double currentValue = (Double) invoicing.getValue();
+                Double currentValueDiary = (Double) invoicing.getDiary();
 
                 // Crescimento em relação ao mesmo mês do último ano
                 if (invoicingsPerYear.containsKey(year.minusYears(1)) &&
                         invoicingsPerYear.get(year.minusYears(1)).containsKey(month)) {
-                    Double lastYearValue = (Double) invoicingsPerYear.get(year.minusYears(1)).get(month).getValue();
+                    Double lastYearValue = invoicingsPerYear.get(year.minusYears(1)).get(month).getValue();
                     Double growthLastYear = ((currentValue - lastYearValue) / lastYearValue) * 100;
                     invoicing.setGrowthLastYear(growthLastYear);
                 } else {
@@ -70,13 +71,22 @@ public class FetchInvoicingsByStoreUseCase {
                         Double lastMonthValue = (Double) invoicingsPerYear.get(previousYear).get(previousMonth)
                                 .getValue();
                         Double growthLastMonth = ((currentValue - lastMonthValue) / lastMonthValue) * 100;
+                        Double lastMonthValueDiary = (Double) invoicingsPerYear.get(previousYear).get(previousMonth)
+                                .getDiary();
+                        Double growthLastMonthDiary = ((currentValueDiary - lastMonthValueDiary) / lastMonthValueDiary)
+                                * 100;
+                        invoicing.setGrowthLastMonthDiary(growthLastMonthDiary);
+
                         invoicing.setGrowthLastMonth(growthLastMonth);
                     } else {
                         invoicing.setGrowthLastMonth(null); // Sem dados do mês anterior
+                        invoicing.setGrowthLastMonthDiary(null); // Sem dados do mês anterior
                     }
                 } else {
                     invoicing.setGrowthLastMonth(null); // Sem dados do mês anterior
+                    invoicing.setGrowthLastMonthDiary(null); // Sem dados do mês anterior
                 }
+
             });
         });
 
