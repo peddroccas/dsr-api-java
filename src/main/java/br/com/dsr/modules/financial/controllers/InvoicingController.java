@@ -70,7 +70,7 @@ public class InvoicingController {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Object> delete(@PathVariable UUID id) {
         try {
